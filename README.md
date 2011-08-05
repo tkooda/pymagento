@@ -3,6 +3,10 @@
 Pymagento provides python bindings for the
 [Magento](http://www.magentocommerce.com) [Core API](http://www.magentocommerce.com/support/magento_core_api).
 
+# Installation
+
+    pip install pymagento
+
 
 # Usage
 
