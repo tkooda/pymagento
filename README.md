@@ -4,15 +4,15 @@ Pymagento provides python bindings for the
 [Magento](http://www.magentocommerce.com) [Core API](http://www.magentocommerce.com/support/magento_core_api).
 
 
-# Requirements
-
-
 # Usage
 
 ```python
-import magento
+import pymagento
+api = pymagento.Magento("hostname", "api_user", "api_key")
+category_id = api.category.create(1, {"name": "New Category"})
+category_info = api.category.info(category_id)
+arbitrary_product = api.product.list()[39]
+api.category.assignProduct(arbitrary_product["id"])
+```
 
-# Tell pymagento about your [Magento API credentials](http://www.magentocommerce.com/boards/viewthread/23208/#t76840).
-challonge.set_credentials("your_magento_username", "your_api_key")
-
-See [challonge.com](http://www.magentocommerce.com/support/magento_core_api) for API documentation.
+See [magento.com](http://www.magentocommerce.com/support/magento_core_api) for API documentation.
