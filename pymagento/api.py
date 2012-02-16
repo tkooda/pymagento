@@ -1,10 +1,30 @@
 import xmlrpclib
 
-
 MAGENTO_API_URI = "/api/xmlrpc/"
 
-
 class Magento(object):
+    """A small wrapper around Magento's xmlrpc implementation
+
+    Usage::
+
+        import pymagento
+        api = pymagento.Magento('myhost', 'myuser', 'mypass')
+        api.catalog_product.info('S8MST-E12W-WHT-MD')
+
+    Roughly equivalent to:
+
+    >>> import xmlrpclib
+    >>> server = xmlrpclib.ServerProxy('http://{0}{1}'.format(host, MAGENTO_API_URI))
+    >>> session = server.login(user, passwd)
+    >>> server.call(session, 'catalog_product.info', ['S2BLCZ-013'])
+    {...}
+
+    Query what methods are available on the server via:
+
+    >>> server.system.listMethods()
+    [...]
+
+    """
     class MagentoException(Exception):
         pass
 
@@ -21,8 +41,42 @@ class Magento(object):
         return _proxy_caller(self, subapi)
 
     def _call(self, path, *args):
+        """A wrapper for Magento's ``call`` method
+
+        >>> server.system.methodSignature('call')
+        [...]
+
+        """
         return self.proxy.call(self.token, path, args)
 
+    def multiCall(self, calls):
+        """Takes a list of lists containing the API call and the args
+
+        Usage::
+
+            api.multiCall([
+                ['catalog_product.info', ['S2BLCZ-013']],
+                ['catalog_product.info', ['S2INCZ-052']],
+            ])
+
+        multiCall (afaik) doesn't raise faultCode exceptions so you need to
+        look for 'isFault' in the return keys:
+
+        >>> server.multiCall(session, [['fakecall', []]])
+        [{'faultCode': '3', 'faultMessage': 'Invalid api path.', 'isFault': True}]
+
+        Equivalent to:
+
+        >>> server.system.methodSignature('multiCall')
+        [...]
+        >>> server.multiCall(session, [
+        ...     ['catalog_product.info', ['S2BLCZ-013']],
+        ...     ['catalog_product.info', ['S2INCZ-052']],
+        ... ])
+        [{...}, {...}]
+
+        """
+        return self.proxy.multiCall(self.token, calls)
 
 class _proxy_caller(object):
     def __init__(self, connection, subapi):
