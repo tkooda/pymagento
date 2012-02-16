@@ -49,6 +49,34 @@ class Magento(object):
         """
         return self.proxy.call(self.token, path, args)
 
+    def multiCall(self, calls):
+        """Takes a list of lists containing the API call and the args
+
+        Usage::
+
+            api.multiCall([
+                ['catalog_product.info', ['S2BLCZ-013']],
+                ['catalog_product.info', ['S2INCZ-052']],
+            ])
+
+        multiCall (afaik) doesn't raise faultCode exceptions so you need to
+        look for 'isFault' in the return keys:
+
+        >>> server.multiCall(session, [['fakecall', []]])
+        [{'faultCode': '3', 'faultMessage': 'Invalid api path.', 'isFault': True}]
+
+        Equivalent to:
+
+        >>> server.system.methodSignature('multiCall')
+        [...]
+        >>> server.multiCall(session, [
+        ...     ['catalog_product.info', ['S2BLCZ-013']],
+        ...     ['catalog_product.info', ['S2INCZ-052']],
+        ... ])
+        [{...}, {...}]
+
+        """
+        return self.proxy.multiCall(self.token, calls)
 
 class _proxy_caller(object):
     def __init__(self, connection, subapi):
