@@ -1,10 +1,30 @@
 import xmlrpclib
 
-
 MAGENTO_API_URI = "/api/xmlrpc/"
 
-
 class Magento(object):
+    """A small wrapper around Magento's xmlrpc implementation
+
+    Usage::
+
+        import pymagento
+        api = pymagento.Magento('myhost', 'myuser', 'mypass')
+        api.catalog_product.info('S8MST-E12W-WHT-MD')
+
+    Roughly equivalent to:
+
+    >>> import xmlrpclib
+    >>> server = xmlrpclib.ServerProxy('http://{0}{1}'.format(host, MAGENTO_API_URI))
+    >>> session = server.login(user, passwd)
+    >>> server.call(session, 'catalog_product.info', ['S2BLCZ-013'])
+    {...}
+
+    Query what methods are available on the server via:
+
+    >>> server.system.listMethods()
+    [...]
+
+    """
     class MagentoException(Exception):
         pass
 
@@ -21,6 +41,12 @@ class Magento(object):
         return _proxy_caller(self, subapi)
 
     def _call(self, path, *args):
+        """A wrapper for Magento's ``call`` method
+
+        >>> server.system.methodSignature('call')
+        [...]
+
+        """
         return self.proxy.call(self.token, path, args)
 
 
