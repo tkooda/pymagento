@@ -20,7 +20,7 @@ Usage
 .. code-block:: python
 
     import pymagento
-    api = pymagento.Magento("hostname", "api_user", "api_key")
+    api = pymagento.Magento("hostname", "api_user", "api_key", scheme="https")
     category_id = api.category.create(1, {"name": "New Category"})
     category_info = api.category.info(category_id)
     arbitrary_product = api.product.list()[39]
